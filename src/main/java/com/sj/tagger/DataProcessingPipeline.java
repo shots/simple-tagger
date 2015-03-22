@@ -40,6 +40,7 @@ public class DataProcessingPipeline {
 			if (StringUtils.isNotEmpty(rawText)) {
 				String taggedText = tagger.tagText(rawText);
 				ArticleData taggedArticle = new ArticleData()
+						.setUrl(url.toString())
 						.setText(rawText)
 						.setTagged_text(taggedText)
 						.setTitle(

@@ -2,6 +2,7 @@ package com.sj.tagger.data.source;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,7 +26,24 @@ public class FilebasedDataSource implements ArticleSource {
 		seedSet = new LinkedList<URL>();
 
 		@SuppressWarnings("unchecked")
-		List<String> urls = FileUtils.readLines(new File(seedFile));
+		List<String> urls = null;
+		InputStream ipStream = null;
+
+		log.debug("Seed File : " + seedFile);
+		try {
+			log.debug("Looking for seed file " + seedFile + "in classpath.");
+			ipStream = getClass().getClassLoader()
+					.getResourceAsStream(seedFile);
+			urls = IOUtils.readLines(ipStream);
+		} catch (IOException e1) {
+			log.debug("Looking for seed file " + seedFile + "in the specified path");
+			urls = FileUtils.readLines(new File(seedFile));
+		} finally {
+			if (ipStream == null) {
+				ipStream.close();
+			}
+		}
+
 		if (CollectionUtils.isNotEmpty(urls)) {
 			for (String u : urls) {
 				try {
@@ -44,9 +63,9 @@ public class FilebasedDataSource implements ArticleSource {
 	public URL getNext() {
 		return seedSet.poll();
 	}
-	
-	public static void main(String []args) {
-		
+
+	public static void main(String[] args) {
+
 	}
 
 }

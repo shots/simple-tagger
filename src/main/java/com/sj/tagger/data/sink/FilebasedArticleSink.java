@@ -18,19 +18,22 @@ public class FilebasedArticleSink implements ArticleSink {
 
 	public FilebasedArticleSink(String basePath) {
 		this.sinkBasePath = basePath;
+		if (!sinkBasePath.endsWith(File.separator)) {
+			sinkBasePath += File.separator;
+		}
 	}
 
 	@Override
 	public void flush(ArticleData taggedArticle) {
 		try {
-			log.debug("Flushing " + taggedArticle.getUrl());
-			FileUtils.writeStringToFile(new File(sinkBasePath
-					+ taggedArticle.getTitle().replaceAll("\\s+", "_")),
+			String sinkfile = sinkBasePath
+					+ taggedArticle.getTitle().replaceAll("\\s+", "_") + ".txt";
+			log.debug("Flushing " + taggedArticle.getUrl() + " to " + sinkfile);
+			FileUtils.writeStringToFile(new File(sinkfile),
 					taggedArticle.getTagged_text());
 		} catch (IOException e) {
 			log.error("Failed to flush " + taggedArticle.getUrl()
 					+ ", error : " + e.getMessage());
 		}
 	}
-
 }
