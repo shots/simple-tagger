@@ -53,7 +53,6 @@ public class PageTagger implements Tagger {
 	public static void main(String[] args) throws IOException, ParseException {
 		Options options = new Options();
 		Option ipOption = new Option("i", "input", true, "Input file");
-		ipOption.setRequired(true);
 		Option opOption = new Option("o", "output", true, "Output Directory");
 		opOption.setRequired(true);
 		
@@ -63,7 +62,7 @@ public class PageTagger implements Tagger {
 		CommandLineParser cliParser = new PosixParser();
 		CommandLine cmd = cliParser.parse(options, args);
 
-		String seedFile = cmd.getOptionValue("i");
+		String seedFile = cmd.getOptionValue("i", "source.txt");
 		String outputDir = cmd.getOptionValue("o");
 		ArticleSource source = new FilebasedDataSource(seedFile);
 		ArticleSink sink = new FilebasedArticleSink(outputDir);
