@@ -31,15 +31,19 @@ public class FilebasedDataSource implements ArticleSource {
 
 		log.debug("Seed File : " + seedFile);
 		try {
-			log.debug("Looking for seed file " + seedFile + "in classpath.");
+			log.debug("Looking for seed file " + seedFile + " in classpath.");
 			ipStream = getClass().getClassLoader()
 					.getResourceAsStream(seedFile);
-			urls = IOUtils.readLines(ipStream);
+			if(ipStream != null) {
+				urls = IOUtils.readLines(ipStream);
+			} else {
+				log.debug("Looking for seed file " + seedFile + "in the specified path");
+				urls = FileUtils.readLines(new File(seedFile));				
+			}
 		} catch (IOException e1) {
-			log.debug("Looking for seed file " + seedFile + "in the specified path");
-			urls = FileUtils.readLines(new File(seedFile));
+			urls = FileUtils.readLines(new File(seedFile));		
 		} finally {
-			if (ipStream == null) {
+			if (ipStream != null) {
 				ipStream.close();
 			}
 		}
